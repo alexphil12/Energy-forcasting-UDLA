@@ -39,7 +39,7 @@ l_CUB2_cov=[];
 l_CUB_cov=[];
 l_bombas_cov=[];
 l_data_center_cov=[];
-mesure=["date","hour"];
+mesure=["Fecha","Hora"];
   
 start = datetime.datetime.strptime("22-07-2015", "%d-%m-%Y")
 end = datetime.datetime.strptime("31-12-2021", "%d-%m-%Y")
@@ -74,23 +74,46 @@ for j in range(24*30*N):
 
 
 #creation of the columns names
-for k in range(27):
-    u=k+1
-    m="M" + str(u)
-    mesure.append(m)
+mesure.append("Voltaje_(R)_[v]")	
+mesure.append("Voltaje_(S)_[v]")	
+mesure.append("Voltaje_(T)_[v]")	
+mesure.append("Voltaje_(RS)_[v]")	
+mesure.append("Voltaje_(ST)_[v]")	
+mesure.append("Voltaje_(TR)_[V]")	
+mesure.append("Corriente_R_[A]")	
+mesure.append("Corriente_S_[A]")	
+mesure.append("Corriente_T_[A]")	
+mesure.append("Potencia_R_[VA]")	
+mesure.append("Potencia_S_[VA]")	
+mesure.append("Potencia_T_[VA]")	
+mesure.append("Potencia_R_[W]")	
+mesure.append("Potencia_S_[W]")	
+mesure.append("Potencia_T_[W]")	
+mesure.append("Potencia_R_[VAR]")	
+mesure.append("Potencia_S_[VAR]")	
+mesure.append("Potencia_T_[VAR]")	
+mesure.append("Corriente_N_[A]")	
+mesure.append("Frecuencia_[Hz]")	
+mesure.append("not_sure_1")	
+mesure.append("not_sure_2")	
+mesure.append("not_sure_3")	
+mesure.append("Potencia_3F_[KVA]")	
+mesure.append("Potencia_3F_[W]")	
+mesure.append("Potencia_3F_[VAR]")	
+mesure.append("Factor de Potencia")
 
 df_p1=pd.DataFrame(tab_array_P1, index = index_lit, columns = mesure)
 df_p2=pd.DataFrame(tab_array_P2, index = index_lit, columns = mesure)
 
 df_p1.astype(float)
-df_p1.astype({'date': str , 'hour': str})
-df_p1["date"]=dates_fin
-df_p1["hour"]=hour_final
+df_p1.astype({'Fecha': str , 'Hora': str})
+df_p1["Fecha"]=dates_fin
+df_p1["Hora"]=hour_final
 
 df_p2.astype(float)
-df_p2.astype({'date': str , 'hour': str})
-df_p2["date"]=dates_fin
-df_p2["hour"]=hour_final
+df_p2.astype({'Fecha': str , 'Hora': str})
+df_p2["Fecha"]=dates_fin
+df_p2["Hora"]=hour_final
 
 #%%
 
@@ -198,77 +221,16 @@ l_cov.append(l_bombas_cov)
 l_cov.append(l_data_center_cov)
 
 #%%
-# Writting of the data into the dataframe (df_P1 in this case) this part is 
-#don't work there is not enough memory to assign on 
+
 l_P1=l_P1+l_P1_cov
 l_P2=l_P2+l_P2_cov
-
-# df_P1_ex=pd.concat(l_P1,ignore_index=True)
-# pr_date=df_P1_ex["date"]
-# pr_heure=df_P1_ex["hour"]
-# index_int=[]
-# for j in range(len(pr_heure)):
-#         s=list(pr_heure[j])
-#         if (s[-1]=="1" or s[-1]=="3" or s[-1]=="5" or s[-1]=="7" or s[-1]=="9") and len(pr_heure[j])==5 and s[0]=="0":
-#             del s[0]
-#             u=int(s[-1])
-#             u=u-1
-#             s[-1]=str(u)
-#             pr_heure[j]="".join(s)
-#             index_int.append(pr_date[j] +"-"+pr_heure[j])
-#         if len(pr_heure[j])==5 and s[0]=="0":
-#             del s[0]
-#             pr_heure[j]="".join(s)
-#             index_int.append(pr_date[j] +"-"+pr_heure[j])
-#         if s[-1]=="1" or s[-1]=="3" or s[-1]=="5" or s[-1]=="7" or s[-1]=="9":
-#             u=int(s[-1])
-#             u=u-1
-#             s[-1]=str(u)
-#             pr_heure[j]="".join(s)
-#             index_int.append(pr_date[j] +"-"+pr_heure[j])
-#         else:
-#             index_int.append(pr_date +"-"+pr_heure[j])
-# df_p1.loc[index_int,"M1":"M27"]= df_P1_ex.iloc[0:range(len(pr_heure))-1,range(2,29)]
-         
-
-
-#this part work, the difference between the code before it is that the assignation
-#is done line by line wich is too long actualy(it would need at list a full week to 
-#complete the two data frame)
-
-# for i in range(len(l_P2)):
-#     df_int=l_P2[i];
-#     pr_date=df_int.iloc[0,0]
-#     pr_heure=df_int["hour"]
-#     for j in range(len(pr_heure)): 
-#         s=list(pr_heure[j])
-#         if (s[-1]=="1" or s[-1]=="3" or s[-1]=="5" or s[-1]=="7" or s[-1]=="9") and len(pr_heure[j])==5 and s[0]=="0":
-#             del s[0]
-#             u=int(s[-1])
-#             u=u-1
-#             s[-1]=str(u)
-#             pr_heure[j]="".join(s)
-#             s=pr_date +"-"+pr_heure[j]
-#         if len(pr_heure[j])==5 and s[0]=="0":
-#             del s[0]
-#             pr_heure[j]="".join(s)
-#             s=pr_date +"-"+pr_heure[j]
-#         if s[-1]=="1" or s[-1]=="3" or s[-1]=="5" or s[-1]=="7" or s[-1]=="9":
-#             u=int(s[-1])
-#             u=u-1
-#             s[-1]=str(u)
-#             pr_heure[j]="".join(s)
-#             s=pr_date +"-"+pr_heure[j]
-#         else:
-#             s=pr_date +"-"+pr_heure[j]
-#         df_p2.loc[s,"M1":"M27"]= df_int.iloc[j,range(2,29)]
-#     print("dataset-suivant-P2")               
+             
               
 index_int=[]
 for i in range(len(l_P2)):
     df_int=l_P2[i];
-    pr_date=list(df_int["date"])
-    pr_heure=list(df_int["hour"])
+    pr_date=list(df_int["Fecha"])
+    pr_heure=list(df_int["Hora"])
     for j in range(len(pr_heure)):
         s=list(pr_heure[j])
         if (s[-1]=="1" or s[-1]=="3" or s[-1]=="5" or s[-1]=="7" or s[-1]=="9") and len(pr_heure[j])==5 and s[0]=="0":
@@ -292,15 +254,15 @@ for i in range(len(l_P2)):
             index_int.append(pr_date[j] +"-"+pr_heure[j])
     df_int.insert(29,"index2",index_int)        
     df_int.set_index("index2",inplace=True)
-    df_p2.loc[index_int,"M1":"M27"]= df_int.loc[index_int,"M1":"M27"]
+    df_p2.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]
     index_int=[]
     f=str(len(l_P2)-i)
     print("dataset-suivant-P2"+" "+f)
     
 for i in range(len(l_P1)):
     df_int=l_P1[i];
-    pr_date=list(df_int["date"])
-    pr_heure=list(df_int["hour"])
+    pr_date=list(df_int["Fecha"])
+    pr_heure=list(df_int["Hora"])
     for j in range(len(pr_heure)):
         s=list(pr_heure[j])
         if (s[-1]=="1" or s[-1]=="3" or s[-1]=="5" or s[-1]=="7" or s[-1]=="9") and len(pr_heure[j])==5 and s[0]=="0":
@@ -324,7 +286,7 @@ for i in range(len(l_P1)):
             index_int.append(pr_date[j] +"-"+pr_heure[j])
     df_int.insert(29,"index2",index_int)        
     df_int.set_index("index2",inplace=True)
-    df_p1.loc[index_int,"M1":"M27"]= df_int.loc[index_int,"M1":"M27"]
+    df_p1.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]
     index_int=[]
     f=str(len(l_P1)-i)
     print("dataset-suivant-P1"+" "+f)
@@ -333,8 +295,8 @@ cols=mesure[2:29]
 df_p1[cols]=df_p1[cols].replace(',','.',regex=True).astype(float)
 df_p2[cols]=df_p2[cols].replace(',','.',regex=True).astype(float)
 #%%
-df_p1.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_p1_full.csv",sep=',',columns=mesure,index=False)
-df_p2.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_p2_full.csv",sep=',',columns=mesure,index=False)    
+df_p1.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p1_full.txt",sep=',',columns=mesure,index=True)
+df_p2.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p2_full.txt",sep=',',columns=mesure,index=True)    
 print("Big dataframe written")        
 #%%
 L_annee_P1=[]
@@ -347,14 +309,14 @@ booll=[]
 for j in range(len(mois)):
     for i in range(len(index_lit)):
         booll.append(mois[j] in index_lit[i])
-    L_mois_P1.append(df_p1.loc[booll,"date":"M27"])
-    L_mois_P1[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_p1"+"-"+mois[j]+".csv",sep=',',columns=mesure,index=True)
+    L_mois_P1.append(df_p1.loc[booll,"Fecha":"Factor de Potencia"])
+    L_mois_P1[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p1"+"-"+mois[j]+".txt",sep=',',columns=mesure,index=True)
     booll=[]
 for j in range(len(annee)):
     for i in range(len(index_lit)):
         booll.append(annee[j] in index_lit[i])
-    L_annee_P1.append(df_p1.loc[booll,"date":"M27"])
-    L_annee_P1[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_p1"+"-"+annee[j]+".csv",sep=',',columns=mesure,index=True)
+    L_annee_P1.append(df_p1.loc[booll,"Fecha":"Factor de Potencia"])
+    L_annee_P1[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p1"+"-"+annee[j]+".txt",sep=',',columns=mesure,index=True)
     booll=[]    
 #%%
 L_annee_P2=[]
@@ -363,14 +325,14 @@ booll=[]
 for j in range(len(mois)):
     for i in range(len(index_lit)):
         booll.append(mois[j] in index_lit[i])
-    L_mois_P2.append(df_p2.loc[booll,"date":"M27"])
-    L_mois_P2[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_p2"+"-"+mois[j]+".csv",sep=',',columns=mesure,index=True)
+    L_mois_P2.append(df_p2.loc[booll,"Fecha":"Factor de Potencia"])
+    L_mois_P2[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p2"+"-"+mois[j]+".txt",sep=',',columns=mesure,index=True)
     booll=[]
 for j in range(len(annee)):
     for i in range(len(index_lit)):
         booll.append(annee[j] in index_lit[i])
-    L_annee_P2.append(df_p2.loc[booll,"date":"M27"])
-    L_annee_P2[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_p2"+"-"+annee[j]+".csv",sep=',',columns=mesure,index=True)
+    L_annee_P2.append(df_p2.loc[booll,"Fecha":"Factor de Potencia"])
+    L_annee_P2[j].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p2"+"-"+annee[j]+".txt",sep=',',columns=mesure,index=True)
     booll=[]      
 print("Dataframe of month and years written")
 #%%
@@ -393,9 +355,9 @@ for j in range(24*30*N2):
     index_lit2.append(dates_fin_2[j] +"-"+ hour_final_2[j])
         
 df_cov=pd.DataFrame(tab_array_cov, index = index_lit2, columns = mesure)  
-df_cov.astype({'date': str , 'hour': str})
-df_cov["date"]=dates_fin_2
-df_cov["hour"]=hour_final_2
+df_cov.astype({'Fecha': str , 'Hora': str})
+df_cov["Fecha"]=dates_fin_2
+df_cov["Hora"]=hour_final_2
     
 df_cov.iloc[:,2:29]=np.nan 
 names=["ASC","P0","P1","P2","P3","P4","P5","P6","TDP-S1","TDP-S2","TDP-S3","TDP-S4","TDP-S5","UPS1","UPS2","UPS3","CUB1","CUB2","TV-CUB","Bombas","Data-center"]
@@ -405,9 +367,9 @@ for i in range(len(l_cov)):
     l_cov_2.append(pd.concat(l_cov[i], ignore_index=True))
 for i in range(len(l_cov)):
     df_int=l_cov_2[i]
-    df_int.sort_values(by=['date','hour'])
-    pr_date=list(df_int["date"])
-    pr_heure=list(df_int["hour"])
+    df_int.sort_values(by=['Fecha','Hora'])
+    pr_date=list(df_int["Fecha"])
+    pr_heure=list(df_int["Hora"])
     for j in range(len(pr_heure)):
         if pd.isna(pr_heure[j])==True:
             pr_heure[j]=pr_heure[j-1]
@@ -442,8 +404,8 @@ for i in range(len(l_cov)):
     print(df_int.index.is_unique)
     df_int=df_int[~df_int.index.duplicated()]
     print(df_int.index.is_unique)
-    df_cov.loc[index_int,"M1":"M27"]= df_int.loc[index_int,"M1":"M27"]
-    df_cov.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_cov-"+names[i]+".csv",sep=',',columns=mesure,index=True)
+    df_cov.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]
+    df_cov.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_cov_(2019-2021)/df_cov-"+names[i]+".txt",sep=',',columns=mesure,index=True)
     df_cov.iloc[:,2:29]=np.nan    
     index_int=[]
     f=str(len(l_cov)-i)
@@ -466,19 +428,13 @@ for j in range(len(L_mois_P2)):
     if pd.isna(indice_extrait_P2[j][0])==False:
         continu_mois_p2.append(L_mois_P2[j].loc[indice_extrait_P2[j][0]:indice_extrait_P2[j][1],mesure])
 print("ok P2")  
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+for i in range(len(continu_mois_p1)):
+    h=str(i)
+    continu_mois_p1[i].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_continu/df_cov_continu_1_"+h+".txt",sep=',',columns=mesure,index=True)    
+for i in range(len(continu_mois_p2)):
+    h=str(i)
+    continu_mois_p2[i].to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_continu/df_cov_continu_2_"+h+".txt",sep=',',columns=mesure,index=True)     
+
     
     
     
