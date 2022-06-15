@@ -74,11 +74,11 @@ for j in range(24*30*N):
 
 
 #creation of the columns names
-mesure.append("Voltaje_(R)_[v]")	
-mesure.append("Voltaje_(S)_[v]")	
-mesure.append("Voltaje_(T)_[v]")	
-mesure.append("Voltaje_(RS)_[v]")	
-mesure.append("Voltaje_(ST)_[v]")	
+mesure.append("Voltaje_(R)_[V]")	
+mesure.append("Voltaje_(S)_[V]")	
+mesure.append("Voltaje_(T)_[V]")	
+mesure.append("Voltaje_(RS)_[V]")	
+mesure.append("Voltaje_(ST)_[V]")	
 mesure.append("Voltaje_(TR)_[V]")	
 mesure.append("Corriente_R_[A]")	
 mesure.append("Corriente_S_[A]")	
@@ -254,7 +254,7 @@ for i in range(len(l_P2)):
             index_int.append(pr_date[j] +"-"+pr_heure[j])
     df_int.insert(29,"index2",index_int)        
     df_int.set_index("index2",inplace=True)
-    df_p2.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]
+    df_p2.loc[index_int,"Voltaje_(R)_[V]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[V]":"Factor de Potencia"]
     index_int=[]
     f=str(len(l_P2)-i)
     print("dataset-suivant-P2"+" "+f)
@@ -286,7 +286,7 @@ for i in range(len(l_P1)):
             index_int.append(pr_date[j] +"-"+pr_heure[j])
     df_int.insert(29,"index2",index_int)        
     df_int.set_index("index2",inplace=True)
-    df_p1.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]
+    df_p1.loc[index_int,"Voltaje_(R)_[V]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[V]":"Factor de Potencia"]
     index_int=[]
     f=str(len(l_P1)-i)
     print("dataset-suivant-P1"+" "+f)
@@ -404,7 +404,7 @@ for i in range(len(l_cov)):
     print(df_int.index.is_unique)
     df_int=df_int[~df_int.index.duplicated()]
     print(df_int.index.is_unique)
-    df_cov.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[v]":"Factor de Potencia"]
+    df_cov.loc[index_int,"Voltaje_(R)_[V]":"Factor de Potencia"]= df_int.loc[index_int,"Voltaje_(R)_[V]":"Factor de Potencia"]
     df_cov.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_cov_(2019-2021)/df_cov-"+names[i]+".txt",sep=',',columns=mesure,index=True)
     df_cov.iloc[:,2:29]=np.nan    
     index_int=[]

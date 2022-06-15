@@ -7,10 +7,12 @@ Created on Wed May 25 16:01:08 2022
 import pandas as pd
 import numpy as np
 import datetime
-from utils_data import trace_data,extractl,trace_histo_longueur_donnee
+from utils_data import trace_data,extractl,trace_histo_longueur_donnee,data_frame_5max,remplie_interpolation,remplie_interpolation_V2,data_frame_5max_V2
 from numpy.fft import fft,ifft
 import matplotlib.pyplot as plt
 import statistics 
+import copy 
+from scipy.ndimage.filters import uniform_filter1d
 l_P0_cov=[];
 l_ASC_cov=[];
 l_P1_cov=[];
@@ -67,11 +69,11 @@ for j in range(24*30*N):
 
 
 #creation of the columns names
-mesure.append("Voltaje_(R)_[v]")	
-mesure.append("Voltaje_(S)_[v]")	
-mesure.append("Voltaje_(T)_[v]")	
-mesure.append("Voltaje_(RS)_[v]")	
-mesure.append("Voltaje_(ST)_[v]")	
+mesure.append("Voltaje_(R)_[V]")	
+mesure.append("Voltaje_(S)_[V]")	
+mesure.append("Voltaje_(T)_[V]")	
+mesure.append("Voltaje_(RS)_[V]")	
+mesure.append("Voltaje_(ST)_[V]")	
 mesure.append("Voltaje_(TR)_[V]")	
 mesure.append("Corriente_R_[A]")	
 mesure.append("Corriente_S_[A]")	
@@ -181,33 +183,39 @@ l_bombas_cov=l_cov[19]
 l_data_center_cov=l_cov[20]
 del l_cov
 #%%
-dates=["30-12-2016-0:00","31-12-2016-23:58"]
-trace_data(dates,df_p1,"M19")
-trace_histo_longueur_donnee(df_p1,100,dates,"M20")
+dates1=["23-07-2015-0:00","31-12-2020-23:58"]
+trace_histo_longueur_donnee(df_p1,100,dates1,mesure[2])
 #%%
-df_fourrier=continu_mois_p1[12]
-N=len(df_fourrier.index)
-nu=np.linspace(0,30,N)
+df_dev=copy.deepcopy(df_p1.loc["01-09-2015-0:00":"30-09-2016-23:58",mesure[0]:mesure[-1]])
+df_dev.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_dev_fin.txt",sep=',',columns=mesure,index=True)    
+
+#%%
+l=data_frame_5max(df_p1,dates1, mesure[3])
+#trace_histo_longueur_donnee(df_p1,100,l,mesure[21])
+df_5_max=df_p1.loc[l[0]:l[1],mesure]
+df_5_max.to_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_5_max.txt",sep=',',columns=mesure,index=True)
+df_fourrier=continu_mois_p1[8]    
 for j in range(len(mesure)-2):
     inter=list(df_fourrier[mesure[j+2]])
-    # mean=statistics.mean(inter)
-    # inter=[i-mean for i in inter]
-    spectre=np.abs(np.fft.fft(inter))
-    spectre=20*np.log10(spectre/(max(spectre)))
-    plt.plot(range(len(inter)),inter)
+    mean=statistics.mean(inter)
+    nter=[i-mean for i in inter]
+    sig2=uniform_filter1d(nter,1000)
+    nu=np.linspace(0,30,len(sig2))
+    spectre=np.abs(np.fft.fft(sig2))/len(sig2)
+    plt.plot(range(len(sig2)),sig2)
     plt.title("Time representation of"+" "+mesure[j+2])
     plt.xlabel("sample")
     plt.ylabel("Ampl")
     plt.show()
-    plt.plot(nu,spectre)
+    plt.plot(nu[0:round(len(sig2)*(1/(30*5)))],spectre[0:round(len(sig2)*(1/(30*5)))])
     plt.title("Spectrum of"+" "+mesure[j+2])
     plt.xlabel("freq event/hours")
     plt.ylabel("Ampl")
     plt.show()
-    
-    
-    
-    
-    
-    
-    
+#%%    
+trace_histo_longueur_donnee(L_mois_P1[3],100,["01-10-2015-0:00","31-10-2015-23:58"],mesure[9])
+df_remplie=remplie_interpolation_V2(L_mois_P1[3].loc["01-10-2015-0:00":"31-10-2015-23:58",mesure],4)    
+trace_histo_longueur_donnee(df_remplie,100,["01-10-2015-0:00","31-10-2015-23:58"],mesure[9])
+#%%
+date2=data_frame_5max_V2(df_p1,dates1, mesure[3])
+trace_histo_longueur_donnee(df_p1,100,date2,mesure[3])

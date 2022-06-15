@@ -9,8 +9,8 @@ import copy as cp
 import numpy as np
 import matplotlib.pyplot as plt
 def extractl(X):
-    H=list(X["Voltaje_(R)_[v]"])
-    h1=pd.DataFrame(cp.deepcopy(X["Voltaje_(R)_[v]"]))
+    H=list(X["Voltaje_(R)_[V]"])
+    h1=pd.DataFrame(cp.deepcopy(X["Voltaje_(R)_[V]"]))
     N=len(H)
     ind=0;
     index_util=[]
@@ -47,7 +47,7 @@ def verif_dataframe_mois(L):
     verif=2
     data=[]
     for k in range(len(L)):
-        H.append(list(L[k]["Voltaje_(R)_[v]"]))
+        H.append(list(L[k]["Voltaje_(R)_[V]"]))
     for k in range(len(H)):
         verif=2
         for i in range(len(H[k])):
@@ -88,28 +88,163 @@ def trace_histo_longueur_donnee(X,nombre_intervalle,dates,mesure):
             is_nan[j]=0
         else:
             is_nan[j]=1
+    if(index_util==[]):
+      long_nan.append()
     for j in range(0,len(index_util)-1,2):
         long.append(abs(index_util[j]-index_util[j+1]))
     for j in range(0,len(index_util)-2,2):
         long_nan.append(abs(index_util[j+1]-index_util[j+2]))
+    fig=plt.figure(figsize=(10,10))
+    plt.subplot(2,2,2)
+    index_plot=list(h1.index)
+    plt.plot(range(len(H)),H,c="green")
+    plt.xlabel("sample")
+    plt.ylabel(mesure)
+    plt.title("display of"+" "+mesure)
+    plt.subplot(2,2,1)   
     plt.hist(long, range = (0, max(long)), bins = np.linspace(0,max(long),nombre_intervalle), color = 'blue',edgecolor = 'black')
     plt.xlabel('length of the interval')
     plt.ylabel('occurency')
     plt.title("Histogram continues data")
-    plt.show()
-    plt.hist(long_nan, range = (0, max(long_nan)), bins = np.linspace(0,max(long_nan),nombre_intervalle), color = 'blue',edgecolor = 'black')
+    plt.subplot(2,2,3)
+    plt.hist(long_nan, range = (0, max(long_nan)), bins = np.linspace(0,max(long_nan),nombre_intervalle), color = 'red',edgecolor = 'black')
     plt.xlabel('length of the NaN')
     plt.ylabel('occurency')
     plt.title("Histogram continues NaN")
-    plt.show()
-    # plot
+    plt.subplot(2,2,4)
     index3=list(h1.index)
     h1=index3.index(dates[0])
     h2=index3.index(dates[1])
     plt.scatter(range(len(is_nan)),is_nan,c="blue",s=0.1)
-    plt.xlabel("parcour du dataframe")
+    plt.xlabel("sample")
     plt.ylabel("nan ou non")
-    plt.show()
-    return(0)
-        
+    plt.title("event map")
+    fig.show()
+def data_frame_5max(X,dates,mesure):
+    H=list(X.loc[dates[0]:dates[1],mesure])
+    h1=pd.DataFrame(cp.deepcopy(X[mesure]))
+    N=len(H)
+    ind=0;
+    index_util=[]
+    long_nan=[]
+    long=[]
+    is_nan=[]
+    for j in range(N):
+        is_nan.append(pd.isna(H[j]))
+        if pd.isna(H[j])==False and ind==0:
+            index_util.append(j)
+            ind=1;
+        elif pd.isna(H[j])==True and ind==1:
+            index_util.append(j-1)
+            ind=0
+    index_util.append(N-1)
+    long_nan.append(index_util[0])
+    
+    for j in range(N):
+        if is_nan[j]==True:
+            is_nan[j]=0
+        else:
+            is_nan[j]=1
+    if(index_util==[]):
+      long_nan.append()
+    for j in range(0,len(index_util)-1,2):
+        long.append(abs(index_util[j]-index_util[j+1]))
+    for u in range(0,len(index_util)-2,2):
+        long_nan.append(abs(index_util[u+1]-index_util[u+2]))
+    del_fin=[]
+    for j in range(len(long_nan)-2):
+        if long_nan[j]<=5:
+            long[j]=long[j]+long[j+1]
+            del_fin.append(j+1)
+    rang_max=long.index(max(long))
+    h1["index1"]=h1.index
+    h2=h1.reset_index(drop=True,inplace=True)
+    l=[]
+    l.append(h1.iloc[index_util[rang_max*2],1])
+    l.append(h1.iloc[index_util[rang_max*2+1],1])
+    return(l)
+def polynome_de_laplace(X,Y,x):
+    L_laplace=[1]*len(X)
+    for i in range(len(X)):
+        for j in range(len(X)):
+            if j!=i:
+                L_laplace[i]=L_laplace[i]*(x-X[j])/(X[i]-X[j])
+    poly_inter=sum([x*y for x,y in zip(L_laplace,Y)])
+    return(poly_inter)
+def remplie_interpolation(df,N):
+    new_df=cp.deepcopy(df)
+    H=list(df.iloc[:,3])
+    new_df["index2"]=df.index
+    index_i3=list(new_df["index2"])
+    del(new_df["index2"])
+    X=list(range(N))
+    inv=list(reversed(list(range(1,N+1))))
+    for j in range(len(H)):
+        if np.isnan(H[j])==True:
+            for i in range(2,29):
+                Y=[new_df.iloc[j-x,i] for x in inv]
+                new_df.iloc[j,i]=polynome_de_laplace(X, Y, N)
+            print(index_i3[j])
+    return(new_df)
+    
+def remplie_interpolation_V2(df,N):
+    new_df=cp.deepcopy(df)
+    H=list(df.iloc[:,3])
+    new_df["index2"]=df.index
+    index_i3=list(new_df["index2"])
+    del(new_df["index2"])
+    X=list(range(N))
+    inv=list(reversed(list(range(1,N+1))))
+    j=0
+    while j<len(H)-round(N/2)-1:
+        if np.isnan(H[j])==True:
+            u=cp.deepcopy(j)
+            while (np.isnan(H[j]) and j !=len(H)-round(N/2)-1)==True:
+                j+=1
+            ecart=abs(u-j)
+            X1=list(range(u-round(N/2),u))
+            X2=list(range(u+ecart,u+ecart+round(N/2)))
+            X=X1+X2
+            for i in range(2,29):
+                for k in range(u,j):
+                    Y=[new_df.iloc[x,i] for x in X]
+                    new_df.iloc[k,i]=polynome_de_laplace(X, Y, k)
+            print(index_i3[j])
+        j+=1
+        if(j==len(H)):
+            break
+    return(new_df)        
+    
+def data_frame_5max_V2(X,dates,mesure):
+    H=list(X.loc[dates[0]:dates[1],mesure])
+    h1=pd.DataFrame(cp.deepcopy(X[mesure]))
+    N=len(H)
+    h1["index2"]=h1.index
+    index_i3=list(h1["index2"])
+    del(h1["index2"])
+    ind=0;
+    index_util=[]
+    long_nan=[]
+    long=[]
+    is_nan=[]
+    compteur=0
+    k=0
+    while(np.isnan(H[k])==True):
+        k+=1
+    for j in range(k,N):
+        if compteur==5:
+            break
+        elif(np.isnan(H[j])==True):
+            compteur+=1
+        elif(np.isnan(H[j])==False):
+            compteur=0
+    d1=index_i3[k]
+    d2=index_i3[j]
+    return(d1,d2)
+    
+    
+    
+    
+    
+    
     
