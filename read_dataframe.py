@@ -118,12 +118,8 @@ for j in range(30):
     continu_mois_p2.append(pd.read_csv(h,sep=",",header=0,names=mesure))
     
     
-df_p1=pd.read_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p1_full.txt",sep=",",header=0,names=mesure)
-df_p1.insert(29,"index2",index_lit)       
-df_p1.set_index("index2",inplace=True)
-df_p2=pd.read_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p2_full.txt",sep=",",header=0,names=mesure)    
-df_p2.insert(29,"index2",index_lit)       
-df_p2.set_index("index2",inplace=True)
+df_p1=pd.read_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p1_full.txt",sep=",",header=0,names=mesure)   
+df_p2=pd.read_csv("C:/Users/alexa/OneDrive/Documents/Code en tout genre/Python Scripts/df_entier_année_mois/df_p2_full.txt",sep=",",header=0,names=mesure)        
 L_annee_P1=[]
 L_mois_P1=[]
 start1 = datetime.datetime.strptime("07-2015", "%m-%Y")
@@ -183,7 +179,7 @@ l_bombas_cov=l_cov[19]
 l_data_center_cov=l_cov[20]
 del l_cov
 #%%
-dates1=["23-07-2015-0:00","31-12-2020-23:58"]
+dates1=["23-07-2015-0:00","31-12-2019-23:58"]
 trace_histo_longueur_donnee(df_p1,100,dates1,mesure[2])
 #%%
 df_dev=copy.deepcopy(df_p1.loc["01-09-2015-0:00":"30-09-2016-23:58",mesure[0]:mesure[-1]])
@@ -219,3 +215,27 @@ trace_histo_longueur_donnee(df_remplie,100,["01-10-2015-0:00","31-10-2015-23:58"
 #%%
 date2=data_frame_5max_V2(df_p1,dates1, mesure[3])
 trace_histo_longueur_donnee(df_p1,100,date2,mesure[3])
+#%%
+from scipy import signal
+from scipy.fft import fftshift
+import matplotlib.pyplot as plt
+import numpy as np
+rng = np.random.default_rng()
+
+fs = 10e3
+N = 1e5
+amp = 2 * np.sqrt(2)
+noise_power = 0.01 * fs / 2
+time = np.arange(N) / float(fs)
+mod = 500*np.cos(2*np.pi*0.25*time)
+carrier = amp * np.sin(2*np.pi*3e3*time + mod)
+noise = rng.normal(scale=np.sqrt(noise_power), size=time.shape)
+noise *= np.exp(-time/5)
+x = carrier + noise
+
+f, t, Sxx = signal.spectrogram(x, fs,nfft=2048)
+plt.pcolormesh(t, f, Sxx, shading='gouraud')
+plt.colorbar()
+plt.ylabel('Frequency [Hz]')
+plt.xlabel('Time [sec]')
+plt.show()
